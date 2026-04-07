@@ -1,1 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EFG MOVIE HUB</title>
+    <style>
+        body { font-family: sans-serif; background: #141414; color: white; text-align: center; margin: 0; padding: 10px; }
+        input { padding: 12px; width: 55%; border-radius: 5px; border: none; }
+        button { padding: 12px; border-radius: 5px; background: #e50914; color: white; border: none; cursor: pointer; font-weight: bold; }
+        #playerContainer { background: #000; width: 100%; aspect-ratio: 16 / 9; margin: 20px 0; border: 1px solid #333; display: flex; align-items: center; justify-content: center; }
+        iframe { width: 100%; height: 100%; border: none; }
+        #trendingSection { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
+        .movie-card { cursor: pointer; }
+        .movie-card img { width: 100%; border-radius: 5px; }
+        .movie-card p { font-size: 0.85rem; margin: 4px 0 0; }
 
+        /* Tabs */
+        .tabs { display: flex; justify-content: center; gap: 10px; margin: 12px 0; }
+        .tab-btn {
+            padding: 10px 24px;
+            border-radius: 5px;
+            border: 2px solid #e50914;
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .tab-btn.active { background: #e50914; }
+
+        /* Season/Episode controls */
+        #tvControls { display: none; margin: 10px 0; }
+        #tvControls label { font-size: 0.85rem; margin: 0 6px; }
+        #tvControls input {
+            width: 50px;
+            padding: 8px;
+            text-align: center;
+            border-radius: 5px;
+            border: none;
+        }
+        #playTvBtn { margin-left: 8px; }
+    </style>
+</head>
+<body>
+
+    <font size="2px">Powered by</font>
+    <img src="tmdb.png" width="15%" height="15%">
+    <font color="#e50914">
+    <h1>🎬 HEY-FLIX</h1></font>
+    <font size="3px">
+    Netflix ni HEY
+     </font>
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('movie')">🎬 Movies</button>
+        <button class="tab-btn" onclick="switchTab('tv')">📺 TV Shows</button>
+    </div>
+
+    <!-- SEARCH -->
+    <input type="text" id="movieSearch" placeholder="Search title...">
+    <button onclick="handleSearch()">Search</button>
+
+    <!-- TV Season/Episode controls -->
+    <div id="tvControls">
+        <label>Season</label>
+        <input type="number" id="seasonNum" value="1" min="1">
+        <label>Episode</label>
+        <input type="number" id="episodeNum" value="1" min="1">
+        <button id="playTvBtn" onclick="playTvEpisode()">▶ Play</button>
+    </div>
+
+    <!-- PLAYER -->
+    <div id="playerContainer">
+        <p id="status">Ready to watch...</p>
+    </div>
+
+    <!-- TRENDING -->
+    <h3 id="trendingLabel">Trending Movies</h3>
+    <div id="trendingSection">Loading...</div>
+
+<script>
+    const API_KEY = '4057741408204536f9d36b8c7170520c';
+    const IMG_PATH = 'https://image.tmdb.org/t/p/w500';
+
+    let currentMode = 'movie'; // 'movie' or 'tv'
+    let selectedTvId = null;
+
+    window.onload = () => getTrending('movie');
+
+    // Switch between Movies and TV tabs
+    function switchTab(mode) {
+        currentMode = mode;
+        selectedTvId = null;
+
+        // Update tab buttons
+        document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+            btn.classList.toggle('active', (mode === 'movie' && i === 0) || (mode === 'tv' && i === 1));
+        });
+
+        // Show/hide TV controls
+        document.getElementById('tvControls').style.display = mode === 'tv' ? 'block' : 'none';
+
+        // Update placeholder
+        document.getElementById('movieSearch').placeholder = mode === 'movie' ? 'Movie title...' : 'TV show title...';
+        document.getElementById('trendingLabel').textContent = mode === 'movie' ? 'Trending Movies' : 'Trending TV Shows';
+
+        // Reset player
+        document.getElementById('playerContainer').innerHTML = '<p>Ready to watch...</p>';
+
+        // Load trending for the selected mode
+        getTrending(mode);
+    }
+
+    // Load trending
+    async function getTrending(mode) {
+        document.getElementById('trendingSection').innerHTML = 'Loading...';
+        try {
+            const res = await fetch(`https://api.themoviedb.org/3/trending/${mode}/week?api_key=${API_KEY}`);
+            const data = await res.json();
+            displayCards(data.results, mode);
+        } catch (err) {
+            document.getElementById('trendingSection').innerHTML = "Failed to load.";
+        }
+    }
+
+    // Handle search based on current mode
+    function handleSearch() {
+        const query = document.getElementById('movieSearch').value;
+        if (!query) return;
+        if (currentMode === 'movie') searchMovie(query);
+        else searchTV(query);
+    }
+
+    // Search movies
+    async function searchMovie(query) {
+        try {
+            const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`);
+            const data = await res.json();
+            if (data.results.length > 0) {
+                updateMoviePlayer(data.results[0].id);
+            } else {
+                alert("No results found.");
+            }
+        } catch (err) { alert("Search failed."); }
+    }
+
+    // Search TV shows
+    async function searchTV(query) {
+        try {
+            const res = await fetch(`https://api.themoviedb.org/3/search/tv?api_key=${API_KEY}&query=${encodeURIComponent(query)}`);
+            const data = await res.json();
+            if (data.results.length > 0) {
+                selectedTvId = data.results[0].id;
+                displayCards(data.results, 'tv');
+                updateTvPlayer(selectedTvId, 1, 1);
+            } else {
+                alert("No results found.");
+            }
+        } catch (err) { alert("Search failed."); }
+    }
+
+    // Display movie/TV cards
+    function displayCards(items, mode) {
+        const section = document.getElementById('trendingSection');
+        section.innerHTML = '';
+        items.forEach(m => {
+            const div = document.createElement('div');
+            div.className = 'movie-card';
+            div.innerHTML = `<img src="${IMG_PATH + m.poster_path}"><p>${m.title || m.name}</p>`;
+            div.onclick = () => {
+                if (mode === 'movie') {
+                    updateMoviePlayer(m.id);
+                } else {
+                    selectedTvId = m.id;
+                    const s = document.getElementById('seasonNum').value || 1;
+                    const e = document.getElementById('episodeNum').value || 1;
+                    updateTvPlayer(m.id, s, e);
+                }
+            };
+            section.appendChild(div);
+        });
+    }
+
+    // Play movie
+    function updateMoviePlayer(id) {
+        document.getElementById('playerContainer').innerHTML =
+            `<iframe src="https://vidsrc.me/embed/movie?tmdb=${id}" allowfullscreen></iframe>`;
+        window.scrollTo(0, 0);
+    }
+
+    // Play TV episode
+    function updateTvPlayer(id, season, episode) {
+        document.getElementById('playerContainer').innerHTML =
+            `<iframe src="https://vidsrc.me/embed/tv?tmdb=${id}&season=${season}&episode=${episode}" allowfullscreen></iframe>`;
+        window.scrollTo(0, 0);
+    }
+
+    // Play button for TV season/episode
+    function playTvEpisode() {
+        if (!selectedTvId) { alert("Please select a TV show first."); return; }
+        const s = document.getElementById('seasonNum').value || 1;
+        const e = document.getElementById('episodeNum').value || 1;
+        updateTvPlayer(selectedTvId, s, e);
+    }
+
+    // Allow pressing Enter to search
+    document.getElementById('movieSearch').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') handleSearch();
+    });
+</script>
+</body>
+</html>
