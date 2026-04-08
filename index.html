@@ -41,6 +41,30 @@
             border: none;
         }
         #playTvBtn { margin-left: 8px; }
+
+        /* Genre selector */
+        #genreContainer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin: 12px 0;
+            padding: 0 6px;
+        }
+
+        .genre-btn {
+            padding: 7px 14px;
+            border-radius: 20px;
+            border: 1px solid #555;
+            background: #222;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .genre-btn:hover { border-color: #e50914; color: white; }
+        .genre-btn.active { background: #e50914; border-color: #e50914; color: white; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -49,9 +73,8 @@
     <img src="tmdb.png" width="15%" height="15%">
     <font color="#e50914">
     <h1>🎬 HEY-FLIX</h1></font>
-    <font size="3px">
-    Netflix ni HEY
-     </font>
+    <font size="3px">Netflix ni HEY</font>
+
     <!-- TABS -->
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('movie')">🎬 Movies</button>
@@ -76,6 +99,9 @@
         <p id="status">Ready to watch...</p>
     </div>
 
+    <!-- GENRE SELECTOR -->
+    <div id="genreContainer"></div>
+
     <!-- TRENDING -->
     <h3 id="trendingLabel">Trending Movies</h3>
     <div id="trendingSection">Loading...</div>
@@ -84,33 +110,87 @@
     const API_KEY = '4057741408204536f9d36b8c7170520c';
     const IMG_PATH = 'https://image.tmdb.org/t/p/w500';
 
-    let currentMode = 'movie'; // 'movie' or 'tv'
+    let currentMode = 'movie';
     let selectedTvId = null;
+    let selectedGenre = null;
 
-    window.onload = () => getTrending('movie');
+    // Movie genres
+    const movieGenres = [
+        { id: 28, name: '💥 Action' },
+        { id: 12, name: '🌍 Adventure' },
+        { id: 16, name: '🎨 Animation' },
+        { id: 35, name: '😂 Comedy' },
+        { id: 80, name: '🔫 Crime' },
+        { id: 99, name: '🎥 Documentary' },
+        { id: 18, name: '🎭 Drama' },
+        { id: 10751, name: '👨‍👩‍👧 Family' },
+        { id: 14, name: '🧙 Fantasy' },
+        { id: 27, name: '👻 Horror' },
+        { id: 9648, name: '🔍 Mystery' },
+        { id: 10749, name: '❤️ Romance' },
+        { id: 878, name: '🚀 Sci-Fi' },
+        { id: 53, name: '😱 Thriller' },
+        { id: 10752, name: '⚔️ War' },
+    ];
 
-    // Switch between Movies and TV tabs
-    function switchTab(mode) {
-        currentMode = mode;
-        selectedTvId = null;
+    // TV genres
+    const tvGenres = [
+        { id: 10759, name: '💥 Action & Adventure' },
+        { id: 16, name: '🎨 Animation' },
+        { id: 35, name: '😂 Comedy' },
+        { id: 80, name: '🔫 Crime' },
+        { id: 99, name: '🎥 Documentary' },
+        { id: 18, name: '🎭 Drama' },
+        { id: 10751, name: '👨‍👩‍👧 Family' },
+        { id: 10762, name: '👶 Kids' },
+        { id: 9648, name: '🔍 Mystery' },
+        { id: 10765, name: '🚀 Sci-Fi & Fantasy' },
+        { id: 10766, name: '🌹 Soap' },
+        { id: 10767, name: '🎤 Talk' },
+        { id: 10768, name: '⚔️ War & Politics' },
+    ];
 
-        // Update tab buttons
-        document.querySelectorAll('.tab-btn').forEach((btn, i) => {
-            btn.classList.toggle('active', (mode === 'movie' && i === 0) || (mode === 'tv' && i === 1));
+    window.onload = () => {
+        buildGenreButtons('movie');
+        getTrending('movie');
+    };
+
+    // Build genre buttons
+    function buildGenreButtons(mode) {
+        const container = document.getElementById('genreContainer');
+        container.innerHTML = '';
+        selectedGenre = null;
+
+        // Trending button (default)
+        const trendBtn = document.createElement('button');
+        trendBtn.className = 'genre-btn active';
+        trendBtn.textContent = '🔥 Trending';
+        trendBtn.onclick = () => {
+            setActiveGenreBtn(trendBtn);
+            selectedGenre = null;
+            document.getElementById('trendingLabel').textContent = mode === 'movie' ? 'Trending Movies' : 'Trending TV Shows';
+            getTrending(mode);
+        };
+        container.appendChild(trendBtn);
+
+        const genres = mode === 'movie' ? movieGenres : tvGenres;
+        genres.forEach(g => {
+            const btn = document.createElement('button');
+            btn.className = 'genre-btn';
+            btn.textContent = g.name;
+            btn.onclick = () => {
+                setActiveGenreBtn(btn);
+                selectedGenre = g.id;
+                document.getElementById('trendingLabel').textContent = g.name;
+                getByGenre(mode, g.id);
+            };
+            container.appendChild(btn);
         });
+    }
 
-        // Show/hide TV controls
-        document.getElementById('tvControls').style.display = mode === 'tv' ? 'block' : 'none';
-
-        // Update placeholder
-        document.getElementById('movieSearch').placeholder = mode === 'movie' ? 'Movie title...' : 'TV show title...';
-        document.getElementById('trendingLabel').textContent = mode === 'movie' ? 'Trending Movies' : 'Trending TV Shows';
-
-        // Reset player
-        document.getElementById('playerContainer').innerHTML = '<p>Ready to watch...</p>';
-
-        // Load trending for the selected mode
-        getTrending(mode);
+    function setActiveGenreBtn(activeBtn) {
+        document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('active'));
+        activeBtn.classList.add('active');
     }
 
     // Load trending
@@ -125,10 +205,47 @@
         }
     }
 
-    // Handle search based on current mode
+    // Load by genre
+    async function getByGenre(mode, genreId) {
+        document.getElementById('trendingSection').innerHTML = 'Loading...';
+        try {
+            const res = await fetch(`https://api.themoviedb.org/3/discover/${mode}?api_key=${API_KEY}&with_genres=${genreId}&sort_by=popularity.desc`);
+            const data = await res.json();
+            displayCards(data.results, mode);
+        } catch (err) {
+            document.getElementById('trendingSection').innerHTML = "Failed to load.";
+        }
+    }
+
+    // Switch between Movies and TV tabs
+    function switchTab(mode) {
+        currentMode = mode;
+        selectedTvId = null;
+        selectedGenre = null;
+
+        document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+            btn.classList.toggle('active', (mode === 'movie' && i === 0) || (mode === 'tv' && i === 1));
+        });
+
+        document.getElementById('tvControls').style.display = mode === 'tv' ? 'block' : 'none';
+        document.getElementById('movieSearch').placeholder = mode === 'movie' ? 'Movie title...' : 'TV show title...';
+        document.getElementById('trendingLabel').textContent = mode === 'movie' ? 'Trending Movies' : 'Trending TV Shows';
+        document.getElementById('playerContainer').innerHTML = '<p>Ready to watch...</p>';
+
+        buildGenreButtons(mode);
+        getTrending(mode);
+    }
+
+    // Handle search
     function handleSearch() {
         const query = document.getElementById('movieSearch').value;
         if (!query) return;
+
+        // Reset genre selection to trending when searching
+        const trendBtn = document.querySelector('.genre-btn');
+        if (trendBtn) setActiveGenreBtn(trendBtn);
+        selectedGenre = null;
+
         if (currentMode === 'movie') searchMovie(query);
         else searchTV(query);
     }
@@ -139,6 +256,7 @@
             const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`);
             const data = await res.json();
             if (data.results.length > 0) {
+                displayCards(data.results, 'movie');
                 updateMoviePlayer(data.results[0].id);
             } else {
                 alert("No results found.");
@@ -161,7 +279,7 @@
         } catch (err) { alert("Search failed."); }
     }
 
-    // Display movie/TV cards
+    // Display cards
     function displayCards(items, mode) {
         const section = document.getElementById('trendingSection');
         section.innerHTML = '';
@@ -197,7 +315,7 @@
         window.scrollTo(0, 0);
     }
 
-    // Play button for TV season/episode
+    // Play TV episode button
     function playTvEpisode() {
         if (!selectedTvId) { alert("Please select a TV show first."); return; }
         const s = document.getElementById('seasonNum').value || 1;
@@ -205,7 +323,7 @@
         updateTvPlayer(selectedTvId, s, e);
     }
 
-    // Allow pressing Enter to search
+    // Enter key to search
     document.getElementById('movieSearch').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') handleSearch();
     });
