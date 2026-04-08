@@ -304,14 +304,14 @@
     // Play movie
     function updateMoviePlayer(id) {
         document.getElementById('playerContainer').innerHTML =
-            `<iframe src="https://vidsrc.me/embed/movie?tmdb=${id}" allowfullscreen></iframe>`;
+            `<iframe src="https://vidnest.fun/movie/${id}" allowfullscreen></iframe>`;
         window.scrollTo(0, 0);
     }
 
     // Play TV episode
     function updateTvPlayer(id, season, episode) {
         document.getElementById('playerContainer').innerHTML =
-            `<iframe src="https://vidsrc.me/embed/tv?tmdb=${id}&season=${season}&episode=${episode}" allowfullscreen></iframe>`;
+            `<iframe src="https://vidnest.fun/tv/${id}${season}${episode}" allowfullscreen></iframe>`;
         window.scrollTo(0, 0);
     }
 
