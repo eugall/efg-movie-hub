@@ -8,7 +8,7 @@
         body { font-family: sans-serif; background: #141414; color: white; text-align: center; margin: 0; padding: 10px; }
         input { padding: 12px; width: 55%; border-radius: 5px; border: none; }
         button { padding: 12px; border-radius: 5px; background: #e50914; color: white; border: none; cursor: pointer; font-weight: bold; }
-        #playerContainer { background: #000; width: 100%; aspect-ratio: 16 / 9; margin: 20px 0; border: 1px solid #333; display: flex; align-items: center; justify-content: center; }
+        #playerContainer { background: #000; width: 100%; aspect-ratio: 16 / 9; margin: 10px 0; border: 1px solid #333; display: flex; align-items: center; justify-content: center; }
         iframe { width: 100%; height: 100%; border: none; }
         #trendingSection { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
         .movie-card { cursor: pointer; }
@@ -41,6 +41,41 @@
             border: none;
         }
         #playTvBtn { margin-left: 8px; }
+
+        /* Server selector */
+        #serverContainer {
+            display: none;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 0 4px;
+            padding: 8px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+
+        #serverContainer span {
+            font-size: 0.75rem;
+            color: #888;
+            margin-right: 4px;
+        }
+
+        .server-btn {
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid #555;
+            background: #222;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .server-btn:hover { border-color: #e50914; color: white; }
+        .server-btn.active { background: #e50914; border-color: #e50914; color: white; }
 
         /* Genre selector */
         #genreContainer {
@@ -99,6 +134,14 @@
         <p id="status">Ready to watch...</p>
     </div>
 
+    <!-- SERVER SELECTOR -->
+    <div id="serverContainer">
+        <span>🖥️ Server:</span>
+        <button class="server-btn active" onclick="switchServer('vidsrc')">server 1</button>
+        <button class="server-btn" onclick="switchServer('2embed')">server 2</button>
+        <button class="server-btn" onclick="switchServer('vidnest')">server 3 ⭐</button>
+    </div>
+
     <!-- GENRE SELECTOR -->
     <div id="genreContainer"></div>
 
@@ -113,6 +156,26 @@
     let currentMode = 'movie';
     let selectedTvId = null;
     let selectedGenre = null;
+    let currentMovieId = null;
+    let currentSeason = 1;
+    let currentEpisode = 1;
+    let currentServer = 'vidsrc';
+
+    // Server URLs
+    const servers = {
+        vidsrc: {
+            movie: (id) => `https://vidsrc.me/embed/movie?tmdb=${id}`,
+            tv: (id, s, e) => `https://vidsrc.me/embed/tv?tmdb=${id}&season=${s}&episode=${e}`
+        },
+        '2embed': {
+            movie: (id) => `https://www.2embed.cc/embed/${id}`,
+            tv: (id, s, e) => `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`
+        },
+        vidnest: {
+            movie: (id) => `https://vidnest.fun/movie/${id}`,
+            tv: (id, s, e) => `https://vidnest.fun/tv/${id}${s}${e}`
+        }
+    };
 
     // Movie genres
     const movieGenres = [
@@ -155,13 +218,37 @@
         getTrending('movie');
     };
 
+    // Switch server — reloads current video on new server
+    function switchServer(server) {
+        currentServer = server;
+
+        // Update server button active state
+        document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+
+        // Reload current video on new server if something is playing
+        if (currentMovieId) {
+            if (currentMode === 'movie') {
+                loadPlayer(servers[server].movie(currentMovieId));
+            } else if (selectedTvId) {
+                loadPlayer(servers[server].tv(selectedTvId, currentSeason, currentEpisode));
+            }
+        }
+    }
+
+    function loadPlayer(url) {
+        document.getElementById('playerContainer').innerHTML =
+            `<iframe src="${url}" allowfullscreen></iframe>`;
+        document.getElementById('serverContainer').style.display = 'flex';
+        window.scrollTo(0, 0);
+    }
+
     // Build genre buttons
     function buildGenreButtons(mode) {
         const container = document.getElementById('genreContainer');
         container.innerHTML = '';
         selectedGenre = null;
 
-        // Trending button (default)
         const trendBtn = document.createElement('button');
         trendBtn.className = 'genre-btn active';
         trendBtn.textContent = '🔥 Trending';
@@ -217,11 +304,12 @@
         }
     }
 
-    // Switch between Movies and TV tabs
+    // Switch tabs
     function switchTab(mode) {
         currentMode = mode;
         selectedTvId = null;
         selectedGenre = null;
+        currentMovieId = null;
 
         document.querySelectorAll('.tab-btn').forEach((btn, i) => {
             btn.classList.toggle('active', (mode === 'movie' && i === 0) || (mode === 'tv' && i === 1));
@@ -231,6 +319,7 @@
         document.getElementById('movieSearch').placeholder = mode === 'movie' ? 'Movie title...' : 'TV show title...';
         document.getElementById('trendingLabel').textContent = mode === 'movie' ? 'Trending Movies' : 'Trending TV Shows';
         document.getElementById('playerContainer').innerHTML = '<p>Ready to watch...</p>';
+        document.getElementById('serverContainer').style.display = 'none';
 
         buildGenreButtons(mode);
         getTrending(mode);
@@ -240,12 +329,9 @@
     function handleSearch() {
         const query = document.getElementById('movieSearch').value;
         if (!query) return;
-
-        // Reset genre selection to trending when searching
         const trendBtn = document.querySelector('.genre-btn');
         if (trendBtn) setActiveGenreBtn(trendBtn);
         selectedGenre = null;
-
         if (currentMode === 'movie') searchMovie(query);
         else searchTV(query);
     }
@@ -258,13 +344,11 @@
             if (data.results.length > 0) {
                 displayCards(data.results, 'movie');
                 updateMoviePlayer(data.results[0].id);
-            } else {
-                alert("No results found.");
-            }
+            } else { alert("No results found."); }
         } catch (err) { alert("Search failed."); }
     }
 
-    // Search TV shows
+    // Search TV
     async function searchTV(query) {
         try {
             const res = await fetch(`https://api.themoviedb.org/3/search/tv?api_key=${API_KEY}&query=${encodeURIComponent(query)}`);
@@ -273,9 +357,7 @@
                 selectedTvId = data.results[0].id;
                 displayCards(data.results, 'tv');
                 updateTvPlayer(selectedTvId, 1, 1);
-            } else {
-                alert("No results found.");
-            }
+            } else { alert("No results found."); }
         } catch (err) { alert("Search failed."); }
     }
 
@@ -303,16 +385,17 @@
 
     // Play movie
     function updateMoviePlayer(id) {
-        document.getElementById('playerContainer').innerHTML =
-            `<iframe src="https://vidnest.fun/movie/${id}" allowfullscreen></iframe>`;
-        window.scrollTo(0, 0);
+        currentMovieId = id;
+        currentMode = 'movie';
+        loadPlayer(servers[currentServer].movie(id));
     }
 
     // Play TV episode
     function updateTvPlayer(id, season, episode) {
-        document.getElementById('playerContainer').innerHTML =
-            `<iframe src="https://vidnest.fun/tv/${id}${season}${episode}" allowfullscreen></iframe>`;
-        window.scrollTo(0, 0);
+        selectedTvId = id;
+        currentSeason = season;
+        currentEpisode = episode;
+        loadPlayer(servers[currentServer].tv(id, season, episode));
     }
 
     // Play TV episode button
@@ -323,7 +406,7 @@
         updateTvPlayer(selectedTvId, s, e);
     }
 
-    // Enter key to search
+    // Enter key search
     document.getElementById('movieSearch').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') handleSearch();
     });
