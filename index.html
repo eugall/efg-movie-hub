@@ -10,69 +10,82 @@
         
         #bgBlur { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.15; filter: blur(50px); background-size: cover; background-position: center; transition: 0.8s; }
         
-        #heroSection { width: 100%; height: 350px; background-size: cover; background-position: center top; display: flex; align-items: flex-end; justify-content: center; position: relative; border-bottom: 3px solid var(--primary); transition: 0.6s; }
+        #heroSection { width: 100%; height: 220px; background-size: cover; background-position: center top; display: flex; align-items: flex-end; justify-content: center; position: relative; border-bottom: 3px solid var(--primary); transition: 0.6s; }
         #heroOverlay { background: linear-gradient(transparent, var(--bg)); width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
-        #heroContent { position: relative; z-index: 2; padding-bottom: 20px; }
-        #heroTitle { font-size: 2.2rem; margin: 0; text-shadow: 2px 2px 10px rgba(0,0,0,0.9); }
+        #heroContent { position: relative; z-index: 2; padding-bottom: 10px; }
+        #heroTitle { font-size: 1.8rem; margin: 0; text-shadow: 2px 2px 10px rgba(0,0,0,0.9); }
 
-        .tabs { display: flex; justify-content: center; gap: 10px; margin: 20px 0; }
-        .tab-btn { padding: 10px 24px; border-radius: 5px; border: 2px solid var(--primary); background: transparent; color: white; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .tabs { display: flex; justify-content: center; gap: 10px; margin: 15px 0; }
+        .tab-btn { padding: 8px 20px; border-radius: 5px; border: 2px solid var(--primary); background: transparent; color: white; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 0.85rem; }
         .tab-btn.active { background: var(--primary); }
 
-        .search-box { display: flex; justify-content: center; margin-bottom: 15px; }
-        input { padding: 12px; width: 60%; max-width: 400px; border-radius: 5px 0 0 5px; border: none; outline: none; }
-        .search-btn { padding: 12px 20px; border-radius: 0 5px 5px 0; background: var(--primary); color: white; border: none; cursor: pointer; font-weight: bold; }
+        .search-box { display: flex; justify-content: center; margin-bottom: 10px; }
+        input { padding: 10px; width: 60%; max-width: 350px; border-radius: 5px 0 0 5px; border: none; outline: none; }
+        .search-btn { padding: 10px 18px; border-radius: 0 5px 5px 0; background: var(--primary); color: white; border: none; cursor: pointer; font-weight: bold; }
 
-        /* Plot Box from your Screenshot */
-        #movieInfo { display: none; max-width: 900px; width: 92%; margin: 15px auto; padding: 15px; background: #1a1a1a; border-left: 4px solid var(--primary); border-radius: 5px; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        #movieOverview { font-size: 0.95rem; line-height: 1.5; margin: 0; color: #eee; }
+        .endpoint-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 10px; padding: 0 10px; }
+        .end-btn { padding: 6px 12px; border-radius: 20px; border: 1px solid #444; background: #1a1a1a; color: white; cursor: pointer; font-size: 0.75rem; }
+        .end-btn.active { background: var(--primary); border-color: var(--primary); }
 
-        #playerContainer { background: #000; width: 95%; max-width: 900px; aspect-ratio: 16 / 9; margin: 15px auto; border: 1px solid #333; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+        #movieInfo { display: none; max-width: 900px; width: 92%; margin: 10px auto; padding: 12px; background: #1a1a1a; border-left: 4px solid var(--primary); border-radius: 5px; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        #movieOverview { font-size: 0.85rem; line-height: 1.4; margin: 0; color: #eee; }
+
+        #playerContainer { background: #000; width: 95%; max-width: 900px; aspect-ratio: 16 / 9; margin: 10px auto; border: 1px solid #333; display: flex; align-items: center; justify-content: center; }
         iframe { width: 100%; height: 100%; border: none; }
 
         #serverContainer { display: none; justify-content: center; gap: 8px; margin: 10px; flex-wrap: wrap; }
-        .server-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid #444; background: #222; color: #ccc; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
-        .server-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .server-btn { padding: 5px 12px; border-radius: 20px; border: 1px solid #444; background: #222; color: #ccc; cursor: pointer; font-size: 0.75rem; }
+        .server-btn.active { background: var(--primary); color: white; }
 
-        #genreContainer { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 15px; }
-        .genre-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid #333; background: #1a1a1a; color: #999; cursor: pointer; font-size: 0.75rem; }
+        #genreContainer { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; padding: 10px; }
+        .genre-btn { padding: 5px 10px; border-radius: 20px; border: 1px solid #333; background: #1a1a1a; color: #999; cursor: pointer; font-size: 0.7rem; }
         .genre-btn.active { background: var(--primary); color: white; }
 
-        #trendingSection { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; padding: 20px; max-width: 1200px; margin: 0 auto; }
-        .movie-card { cursor: pointer; background: #1a1a1a; border-radius: 10px; overflow: hidden; transition: 0.3s; border: 1px solid #222; }
-        .movie-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        #trendingSection { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; padding: 15px; max-width: 1200px; margin: 0 auto; }
+        .movie-card { cursor: pointer; background: #1a1a1a; border-radius: 8px; overflow: hidden; transition: 0.3s; border: 1px solid #222; }
         .movie-card img { width: 100%; display: block; }
-        .movie-card p { font-size: 0.8rem; padding: 10px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .movie-card p { font-size: 0.75rem; padding: 8px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        #tvControls { display: none; margin: 10px; background: #1a1a1a; padding: 10px; border-radius: 8px; display: inline-block; }
-        #tvControls input { width: 55px; border-radius: 5px; margin: 0 5px; text-align: center; padding: 8px; border: none; }
+        #tvControls { display: none; margin: 5px; background: #1a1a1a; padding: 8px; border-radius: 8px; display: inline-block; }
+        #tvControls input { width: 45px; border-radius: 5px; margin: 0 4px; text-align: center; padding: 6px; border: none; }
     </style>
 </head>
 <body>
 
 <div id="bgBlur"></div>
+<!-img src="tmdb.png" width="15%" height="15%">
+        
 <div id="heroSection">
+
     <div id="heroOverlay"></div>
+        
     <div id="heroContent">
-        <h2 id="heroTitle">HEY-FLIX</h2>
-        <p id="heroTagline">Netflix ni HEY</p>
+<h2 id="heroTitle">HEY-FLIX</h2>
     </div>
 </div>
 
 <div class="tabs">
-    <button class="tab-btn active" id="movieTab" onclick="switchTab('movie')">🎬 Movies</button>
-    <button class="tab-btn" id="tvTab" onclick="switchTab('tv')">📺 TV Shows</button>
+    <button class="tab-btn active" id="movieTab" onclick="switchTab('movie')">Movies</button>
+    <button class="tab-btn" id="tvTab" onclick="switchTab('tv')">TV Shows</button>
 </div>
 
 <div class="search-box">
-    <input type="text" id="movieSearch" placeholder="Search for a title...">
+    <input type="text" id="movieSearch" placeholder="Search...">
     <button class="search-btn" onclick="handleSearch()">Search</button>
 </div>
 
+<div class="endpoint-container" id="endpointTabs">
+    <button class="end-btn active" onclick="loadCategory('trending', this)">🔥 Trending</button>
+    <button class="end-btn" onclick="loadCategory('popular', this)">⭐ Popular</button>
+    <button class="end-btn" onclick="loadCategory('top_rated', this)">🏆 Top Rated</button>
+    <button class="end-btn" id="playingBtn" onclick="loadCategory('now_playing', this)">🎬 Now Playing</button>
+    <button class="end-btn" id="upcomingBtn" onclick="loadCategory('upcoming', this)">📅 Upcoming</button>
+</div>
+
 <div id="tvControls" style="display: none;">
-    Season: <input type="number" id="seasonNum" value="1" min="1">
-    Episode: <input type="number" id="episodeNum" value="1" min="1">
-    <button class="search-btn" style="border-radius: 5px; margin-left: 10px;" onclick="playTvEpisode()">▶ Play</button>
+    S: <input type="number" id="seasonNum" value="1" min="1">
+    E: <input type="number" id="episodeNum" value="1" min="1">
+    <button class="search-btn" style="border-radius: 5px; padding: 6px 12px;" onclick="playTvEpisode()">Play</button>
 </div>
 
 <div id="movieInfo">
@@ -80,7 +93,7 @@
 </div>
 
 <div id="playerContainer">
-    <p>Select a poster below to start streaming</p>
+    <p>Ready to stream</p>
 </div>
 
 <div id="serverContainer">
@@ -90,11 +103,10 @@
 </div>
 
 <div id="genreContainer"></div>
-<h3 id="trendingLabel">🔥 Trending Movies</h3>
+<h3 id="trendingLabel" style="font-size: 1rem; margin: 10px 0;">🔥 Trending Movies</h3>
 <div id="trendingSection"></div>
 
 <script>
-    // Obfuscated Key
     const _0xkey = "NDA1Nzc0MTQwODIwNDUzNmY5ZDM2YjhjNzE3MDUyMGM=";
     const API_KEY = atob(_0xkey);
     const IMG_PATH = 'https://image.tmdb.org/t/p/w500';
@@ -111,11 +123,28 @@
     };
 
     const allGenres = {
-        movie: [{id:28,name:'Action'},{id:12,name:'Adventure'},{id:16,name:'Animation'},{id:35,name:'Comedy'},{id:80,name:'Crime'},{id:18,name:'Drama'},{id:14,name:'Fantasy'},{id:27,name:'Horror'},{id:878,name:'Sci-Fi'},{id:53,name:'Thriller'}],
-        tv: [{id:10759,name:'Action & Adv'},{id:16,name:'Animation'},{id:35,name:'Comedy'},{id:18,name:'Drama'},{id:10765,name:'Sci-Fi & Fan'}]
+        movie: [{id:28,name:'Action'},{id:12,name:'Adventure'},{id:16,name:'Animation'},{id:35,name:'Comedy'},{id:80,name:'Crime'},{id:99,name:'Docu'},{id:18,name:'Drama'},{id:10751,name:'Family'},{id:14,name:'Fantasy'},{id:27,name:'Horror'},{id:9648,name:'Mystery'},{id:10749,name:'Romance'},{id:878,name:'Sci-Fi'},{id:53,name:'Thriller'},{id:37,name:'Western'}],
+        tv: [{id:10759,name:'Action & Adv'},{id:16,name:'Animation'},{id:35,name:'Comedy'},{id:80,name:'Crime'},{id:99,name:'Docu'},{id:18,name:'Drama'},{id:10751,name:'Family'},{id:10762,name:'Kids'},{id:9648,name:'Mystery'},{id:10765,name:'Sci-Fi & Fan'},{id:37,name:'Western'}]
     };
 
-    window.onload = () => { buildGenreButtons('movie'); getTrending('movie'); };
+    window.onload = () => { buildGenreButtons('movie'); loadCategory('trending'); };
+
+    function loadCategory(category, btn) {
+        if(btn) {
+            document.querySelectorAll('.end-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+        let tvMap = { 'now_playing': 'on_the_air', 'upcoming': 'airing_today' };
+        let finalCat = (currentMode === 'tv' && tvMap[category]) ? tvMap[category] : category;
+        let url = category === 'trending' ? `https://api.themoviedb.org/3/trending/${currentMode}/week?api_key=${API_KEY}` : `https://api.themoviedb.org/3/${currentMode}/${finalCat}?api_key=${API_KEY}`;
+        fetchData(url);
+    }
+
+    async function fetchData(url) {
+        const res = await fetch(url);
+        const data = await res.json();
+        displayCards(data.results, currentMode);
+    }
 
     function updateVisuals(item) {
         const path = item.backdrop_path ? BACKDROP_PATH + item.backdrop_path : '';
@@ -128,35 +157,33 @@
         document.getElementById('movieOverview').textContent = item.overview || "No plot summary available.";
     }
 
-    function switchServer(server, btn) {
-        currentServer = server;
-        document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        if (currentId) loadPlayer();
-    }
-
-    function loadPlayer() {
-        const s = document.getElementById('seasonNum').value;
-        const e = document.getElementById('episodeNum').value;
-        const url = currentMode === 'movie' ? servers[currentServer].movie(currentId) : servers[currentServer].tv(currentId, s, e);
-        document.getElementById('playerContainer').innerHTML = `<iframe src="${url}" allowfullscreen></iframe>`;
-        document.getElementById('serverContainer').style.display = 'flex';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
     function switchTab(mode) {
         currentMode = mode;
         document.getElementById('movieTab').classList.toggle('active', mode === 'movie');
         document.getElementById('tvTab').classList.toggle('active', mode === 'tv');
         document.getElementById('tvControls').style.display = mode === 'tv' ? 'inline-block' : 'none';
-        document.getElementById('trendingLabel').textContent = mode === 'movie' ? '🔥 Trending Movies' : '🔥 Trending TV Shows';
+        document.getElementById('playingBtn').textContent = mode === 'movie' ? "🎬 Now Playing" : "📡 On The Air";
+        document.getElementById('upcomingBtn').textContent = mode === 'movie' ? "📅 Upcoming" : "🌅 Airing Today";
         buildGenreButtons(mode);
-        getTrending(mode);
+        loadCategory('trending', document.querySelector('.end-btn'));
     }
 
-    function buildGenreButtons(mode) {
+        function buildGenreButtons(mode) {
         const container = document.getElementById('genreContainer');
-        container.innerHTML = '<button class="genre-btn active" onclick="getTrending(\''+mode+'\')">🔥 Trending</button>';
+        container.innerHTML = '';
+        
+        // Add the "Trending" button back first
+        const trendingBtn = document.createElement('button');
+        trendingBtn.className = 'genre-btn active';
+        trendingBtn.textContent = '🔥 Trending';
+        trendingBtn.onclick = () => {
+            document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('active'));
+            trendingBtn.classList.add('active');
+            document.getElementById('trendingLabel').textContent = `🔥 Trending ${currentMode === 'movie' ? 'Movies' : 'Shows'}`;
+            getTrending(mode);
+        };
+        container.appendChild(trendingBtn);
+
         allGenres[mode].forEach(g => {
             const btn = document.createElement('button');
             btn.className = 'genre-btn';
@@ -164,23 +191,16 @@
             btn.onclick = () => {
                 document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                fetchByGenre(mode, g.id);
+                
+                // ITO YUNG FIX: Ina-update natin yung Label text dito
+                document.getElementById('trendingLabel').textContent = `${g.name} ${currentMode === 'movie' ? 'Movies' : 'Shows'}`;
+                
+                fetchData(`https://api.themoviedb.org/3/discover/${mode}?api_key=${API_KEY}&with_genres=${g.id}`);
             };
             container.appendChild(btn);
         });
     }
 
-    async function getTrending(mode) {
-        const res = await fetch(`https://api.themoviedb.org/3/trending/${mode}/week?api_key=${API_KEY}`);
-        const data = await res.json();
-        displayCards(data.results, mode);
-    }
-
-    async function fetchByGenre(mode, genreId) {
-        const res = await fetch(`https://api.themoviedb.org/3/discover/${mode}?api_key=${API_KEY}&with_genres=${genreId}`);
-        const data = await res.json();
-        displayCards(data.results, mode);
-    }
 
     async function handleSearch() {
         const q = document.getElementById('movieSearch').value;
@@ -188,16 +208,12 @@
         const res = await fetch(`https://api.themoviedb.org/3/search/${currentMode}?api_key=${API_KEY}&query=${encodeURIComponent(q)}`);
         const data = await res.json();
         displayCards(data.results, currentMode);
-        if(data.results.length > 0) {
-            currentId = data.results[0].id;
-            updateVisuals(data.results[0]);
-            loadPlayer();
-        }
     }
 
     function displayCards(items, mode) {
         const section = document.getElementById('trendingSection');
         section.innerHTML = '';
+        if(!items) return;
         items.forEach(item => {
             if (!item.poster_path) return;
             const div = document.createElement('div');
@@ -210,6 +226,22 @@
             };
             section.appendChild(div);
         });
+    }
+
+    function loadPlayer() {
+        const s = document.getElementById('seasonNum').value;
+        const e = document.getElementById('episodeNum').value;
+        const url = currentMode === 'movie' ? servers[currentServer].movie(currentId) : servers[currentServer].tv(currentId, s, e);
+        document.getElementById('playerContainer').innerHTML = `<iframe src="${url}" allowfullscreen></iframe>`;
+        document.getElementById('serverContainer').style.display = 'flex';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function switchServer(server, btn) {
+        currentServer = server;
+        document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if (currentId) loadPlayer();
     }
 
     function playTvEpisode() {
