@@ -33,6 +33,9 @@
         #playerContainer { background: #000; width: 95%; max-width: 900px; aspect-ratio: 16 / 9; margin: 10px auto; border: 1px solid #333; display: flex; align-items: center; justify-content: center; }
         iframe { width: 100%; height: 100%; border: none; }
 
+        /* The Pro-Tip Box style from your test */
+        #adNote { display: none; max-width: 900px; width: 90%; margin: 10px auto; background: rgba(229, 9, 20, 0.1); border: 1px solid var(--primary); padding: 10px; border-radius: 8px; font-size: 0.8rem; color: #ffcccc; }
+
         #serverContainer { display: none; justify-content: center; gap: 8px; margin: 10px; flex-wrap: wrap; }
         .server-btn { padding: 5px 12px; border-radius: 20px; border: 1px solid #444; background: #222; color: #ccc; cursor: pointer; font-size: 0.75rem; }
         .server-btn.active { background: var(--primary); color: white; }
@@ -53,14 +56,11 @@
 <body>
 
 <div id="bgBlur"></div>
-<!-img src="tmdb.png" width="15%" height="15%">
         
 <div id="heroSection">
-
     <div id="heroOverlay"></div>
-        
     <div id="heroContent">
-<h2 id="heroTitle">HEY-FLIX</h2>
+        <h2 id="heroTitle">HEY-FLIX</h2>
     </div>
 </div>
 
@@ -94,6 +94,10 @@
 
 <div id="playerContainer">
     <p>Ready to stream</p>
+</div>
+
+<div id="adNote">
+    💡 <b>Pro-Tip:</b> If you're using Chrome, we recommend <b>Brave Browser</b> or setting your <b>Private DNS</b> to <code>dns.adguard.com</code> for an ad-free experience.
 </div>
 
 <div id="serverContainer">
@@ -168,11 +172,10 @@
         loadCategory('trending', document.querySelector('.end-btn'));
     }
 
-        function buildGenreButtons(mode) {
+    function buildGenreButtons(mode) {
         const container = document.getElementById('genreContainer');
         container.innerHTML = '';
         
-        // Add the "Trending" button back first
         const trendingBtn = document.createElement('button');
         trendingBtn.className = 'genre-btn active';
         trendingBtn.textContent = '🔥 Trending';
@@ -180,7 +183,7 @@
             document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('active'));
             trendingBtn.classList.add('active');
             document.getElementById('trendingLabel').textContent = `🔥 Trending ${currentMode === 'movie' ? 'Movies' : 'Shows'}`;
-            getTrending(mode);
+            loadCategory('trending');
         };
         container.appendChild(trendingBtn);
 
@@ -191,16 +194,12 @@
             btn.onclick = () => {
                 document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                
-                // ITO YUNG FIX: Ina-update natin yung Label text dito
                 document.getElementById('trendingLabel').textContent = `${g.name} ${currentMode === 'movie' ? 'Movies' : 'Shows'}`;
-                
                 fetchData(`https://api.themoviedb.org/3/discover/${mode}?api_key=${API_KEY}&with_genres=${g.id}`);
             };
             container.appendChild(btn);
         });
     }
-
 
     async function handleSearch() {
         const q = document.getElementById('movieSearch').value;
@@ -232,8 +231,13 @@
         const s = document.getElementById('seasonNum').value;
         const e = document.getElementById('episodeNum').value;
         const url = currentMode === 'movie' ? servers[currentServer].movie(currentId) : servers[currentServer].tv(currentId, s, e);
+        
+        // No sandbox here to ensure the player loads for everyone
         document.getElementById('playerContainer').innerHTML = `<iframe src="${url}" allowfullscreen></iframe>`;
+            
+        // Show server buttons and the ad-blocker tip
         document.getElementById('serverContainer').style.display = 'flex';
+        document.getElementById('adNote').style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -249,13 +253,9 @@
         loadPlayer();
     }
 </script>
-    
 <font size="2px" color="grey" face="Times new roman">
 EFG streaming webapp powered by (TMDB)
 </font>&nbsp
 <img src="tmdb.png" width="10%" height="10%" align="center">
-<div><div>
-<br><br>
-    
 </body>
 </html>
